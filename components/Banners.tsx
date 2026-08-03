@@ -6,8 +6,8 @@ type Banner = {
   _id: string;
   desktopImage: string;
   mobileImage: string;
-
   isActive: boolean;
+  displayOrder?: number;
 };
 
 type FieldProps = { label: string; children: ReactNode };
