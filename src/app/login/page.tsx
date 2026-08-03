@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@store.com");
-  const [password, setPassword] = useState("PASSWORD#123");
+  const [email, setEmail] = useState("printiqo@gmail.com");
+  const [password, setPassword] = useState("printiqo");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
@@ -177,7 +177,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="admin@store.com"
+                placeholder="printiqo@gmail.com"
                 style={{
                   width: "100%",
                   padding: "12px",
