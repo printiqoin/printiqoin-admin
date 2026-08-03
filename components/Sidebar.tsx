@@ -20,8 +20,8 @@ const NAV = [
   },
   {
     id: "products",
-    label: "Tarif",
-    path: "/admin/tarif",
+    label: "Products",
+    path: "/admin/products",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
@@ -85,7 +85,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
           width: 240px;
           height: 100vh;
           background: #ffffff;
-          border-right: 2px solid #FF8C00;
+          border-right: 2px solid #D32F2F;
           display: flex;
           flex-direction: column;
           padding: 0;
@@ -111,7 +111,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
             height: 100%;
             transform: translateX(0);
             z-index: auto;
-            border-right: 2px solid #FF8C00;
+            border-right: 2px solid #D32F2F;
             box-shadow: none;
             flex-shrink: 0;
           }
@@ -128,8 +128,8 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
         /* Sidebar header/logo */
         .sidebar-header {
           padding: 20px 16px;
-          border-bottom: 2px solid #FF8C00;
-          background: linear-gradient(135deg, #FF8C00 0%, #1B5E20 100%);
+          border-bottom: 2px solid #f3f4f6;
+          background: #ffffff;
           display: flex;
           align-items: center;
           gap: 10px;
@@ -204,20 +204,20 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
         }
 
         .nav-item:hover {
-          color: #FF8C00;
+          color: #D32F2F;
           background: #fff5f0;
-          border-left-color: #FF8C00;
+          border-left-color: #D32F2F;
         }
 
         .nav-item.active {
-          color: #FF8C00;
+          color: #D32F2F;
           background: #fff5f0;
-          border-left-color: #FF8C00;
+          border-left-color: #D32F2F;
           font-weight: 600;
         }
 
         .nav-item.active svg {
-          color: #FF8C00;
+          color: #D32F2F;
         }
 
         .nav-item svg {
@@ -229,7 +229,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
         /* Sidebar footer */
         .sidebar-footer {
           padding: 16px;
-          border-top: 2px solid #FF8C00;
+          border-top: 2px solid #D32F2F;
           margin-top: auto;
           background: linear-gradient(135deg, #fff9f5 0%, #f5faf8 100%);
         }
@@ -245,7 +245,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
           width: 32px;
           height: 32px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #FF8C00, #1B5E20);
+          background: linear-gradient(135deg, #D32F2F, #374151);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -263,7 +263,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
         .user-name {
           font-size: 13px;
           font-weight: 600;
-          color: #1B5E20;
+          color: #374151;
           margin: 0;
           white-space: nowrap;
           overflow: hidden;
@@ -295,7 +295,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
         }
 
         .logout-btn:hover {
-          color: #FF8C00;
+          color: #D32F2F;
           background: #fff5f0;
         }
 
@@ -335,12 +335,12 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
         }
 
         .sidebar::-webkit-scrollbar-thumb {
-          background: #FF8C00;
+          background: #D32F2F;
           border-radius: 4px;
         }
 
         .sidebar::-webkit-scrollbar-thumb:hover {
-          background: #E67E00;
+          background: #B71C1C;
         }
       `}</style>
 
@@ -354,13 +354,9 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
       {/* Sidebar */}
       <aside className={`sidebar${isSidebarOpen ? " open" : ""}`} role="navigation">
         {/* Logo Section */}
-        <div className="sidebar-header">
-          <div className="sidebar-logo-icon">
-            <img src="/images/logo.jpg" alt="© 2025 Nadav Resorts & Events" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-          </div>
-          <div>
-            <h1 className="sidebar-logo">Nadav Resorts & Events</h1>
-            <p className="sidebar-subtext">ADMIN</p>
+        <div className="sidebar-header" style={{ justifyContent: 'center' }}>
+          <div className="sidebar-logo-icon" style={{ width: '64px', height: '64px', background: 'transparent' }}>
+            <img src="/images/logo.png" alt="Printiqo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
         </div>
 

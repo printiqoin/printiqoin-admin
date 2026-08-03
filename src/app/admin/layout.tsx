@@ -132,7 +132,7 @@ export default function AdminLayout({
             left: 12,
             background: "#ffffff",
             border: "1px solid #e2e8f0",
-            color: "#1B5E20",
+            color: "#374151",
             fontSize: 24,
             cursor: "pointer",
             zIndex: 1001,

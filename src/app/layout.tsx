@@ -13,11 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NADAV RESORTS & EVENTS - Admin Panel",
-  description: "Admin control center for managing resorts, events, and bookings",
+  title: "Printiqo - Admin Panel",
+  description: "Admin control center for Printiqo",
   icons: {
-    icon: "/nadav-logo.ico",
-    shortcut: "/nadav-logo.ico",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
   },
 };
 

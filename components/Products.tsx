@@ -12,7 +12,6 @@ type Variant = {
   price: string;
   stock: string;
   sizes: SizeEntry[];
-  description?: string;
   images: string[];       // base64 previews / stored URLs
   isDefault: boolean;
   duration?: string;
@@ -34,16 +33,7 @@ type Product = {
 
 type Category = { _id: string; name: string };
 
-const AVAILABLE_AMENITIES = [
-  "AC",
-  "WiFi",
-  "Parking",
-  "Swimming Pool",
-  "Dining",
-  "Stage",
-  "Generator",
-  "Projector"
-];
+
 
 const BLANK_VARIANT = (): Variant => ({
   name: "",
@@ -51,7 +41,6 @@ const BLANK_VARIANT = (): Variant => ({
   price: "",
   stock: "0",
   sizes: [],
-  description: "",
   images: [],
   isDefault: false,
   duration: "",
@@ -241,11 +230,10 @@ export default function Products() {
 
   /* ── Validate ── */
   const validate = (): string | null => {
-    if (!name.trim()) return "Service name is required.";
-    if (!description.trim()) return "Description is required.";
+    if (!name.trim()) return "Product name is required.";
     if (variants.length === 0) return "At least one variant is required.";
     const colors = variants.map(v => v.color.trim().toLowerCase()).filter(Boolean);
-    if (new Set(colors).size !== colors.length) return "Each variant flavour must be unique.";
+    if (new Set(colors).size !== colors.length) return "Each variant name must be unique.";
     for (const v of variants) {
       const vPrice = Number(v.price) || (v.sizes.length > 0 ? Number(v.sizes[0].price) : 0);
       if (vPrice <= 0) return "Every variant must have a valid price (check your quantities).";
@@ -330,7 +318,7 @@ export default function Products() {
 
   /* ── Delete ── */
   const remove = async (id: string) => {
-    if (!confirm("Delete this tarif?")) return;
+    if (!confirm("Delete this product?")) return;
     const res = await fetch(`${api}/product/delete/${id}`, {
       method: "DELETE", headers: { Authorization: token() },
     });
@@ -344,18 +332,18 @@ export default function Products() {
     <div style={{ width: "100%", maxWidth: "100%" }}>
       <style>{`
         .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);}
-        .btn-primary{background:#FF8C00;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;}
-        .btn-primary:hover{background:#E67E00;}
+        .btn-primary{background:#D32F2F;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;}
+        .btn-primary:hover{background:#B71C1C;}
         .btn-primary:disabled{opacity:.5;cursor:not-allowed;}
-        .btn-ghost{background:transparent;color:#1B5E20;border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;}
-        .btn-ghost:hover{color:#FF8C00;border-color:#FF8C00;background:#fff5f0;}
-        .btn-sm{background:#f3f4f6;color:#1B5E20;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;border:1px solid #e2e8f0;}
+        .btn-ghost{background:transparent;color:#374151;border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;}
+        .btn-ghost:hover{color:#D32F2F;border-color:#D32F2F;background:#fff5f0;}
+        .btn-sm{background:#f3f4f6;color:#374151;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;border:1px solid #e2e8f0;}
         .btn-sm:hover{background:#e5e7eb;}
         .input{background:#ffffff;border:1px solid #e2e8f0;border-radius:8px;color:#111827;padding:10px;width:100%;box-sizing:border-box;font-size:13px;outline:none;}
-        .input:focus{border-color:#FF8C00;}
+        .input:focus{border-color:#D32F2F;}
         .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:9999;}
         .variant-card{background:#f8f9fa;border:1px solid #e2e8f0;border-radius:10px;padding:16px;position:relative;}
-        .variant-card.default{border-color:#FF8C00;}
+        .variant-card.default{border-color:#D32F2F;}
         .err{color:#ef4444;font-size:12px;margin-bottom:12px;background:#ef444415;padding:8px 12px;border-radius:6px;}
         .trow td{padding:14px 20px;border-bottom:1px solid #e2e8f0;color:#111827;font-size:13px;}
         .color-dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:6px;border:1px solid #00000030;}
@@ -372,7 +360,7 @@ export default function Products() {
         @media (max-width: 768px) {
           .trow { display: block; margin-bottom: 16px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; }
           .trow td { display: block; padding: 8px 0; border: none; margin-bottom: 8px; }
-          .trow td:before { content: attr(data-label); font-weight: 600; color: #FF8C00; display: block; margin-bottom: 4px; }
+          .trow td:before { content: attr(data-label); font-weight: 600; color: #D32F2F; display: block; margin-bottom: 4px; }
           .overlay { padding: 16px; }
           .modal-card { width: calc(100% - 32px) !important; max-height: 90vh !important; }
         }
@@ -386,33 +374,38 @@ export default function Products() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, flexWrap: "wrap", gap: 12, width: "100%" }}>
         <div>
-          <h1 style={{ color: "#1B5E20", fontFamily: "'Syne',sans-serif", fontSize: "clamp(20px, 5vw, 26px)", fontWeight: 800, margin: 0 }}>Tarif</h1>
+          <h1 style={{ color: "#374151", fontFamily: "'Syne',sans-serif", fontSize: "clamp(20px, 5vw, 26px)", fontWeight: 800, margin: 0 }}>Products</h1>
           <p style={{ color: "#4b5563", fontSize: 13, margin: "4px 0 0 0" }}>{products.length} total</p>
         </div>
-        <button className="btn-primary" onClick={() => { resetForm(); setShowModal(true); }}>+ Add Tarif</button>
+        <button className="btn-primary" onClick={() => { resetForm(); setShowModal(true); }}>+ Add Product</button>
       </div>
 
       {/* Search */}
-      <input className="input" style={{ marginBottom: 20, width: "100%" }} placeholder="Search tarif…" value={search} onChange={e => setSearch(e.target.value)} />
+      <input className="input" style={{ marginBottom: 20, width: "100%" }} placeholder="Search products…" value={search} onChange={e => setSearch(e.target.value)} />
 
       {/* Table */}
       <div className="card" style={{ overflowX: "auto", overflowY: "hidden", width: "100%" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "600px" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid #e2e8f0" }}>
-              <td style={{ padding: "12px 20px", fontSize: 11, color: "#4b5563", fontWeight: 600, textTransform: "uppercase" }}>Tarif</td>
-              <td style={{ padding: "12px 20px", fontSize: 11, color: "#4b5563", fontWeight: 600, textTransform: "uppercase" }}>Description</td>
+              <td style={{ padding: "12px 20px", fontSize: 11, color: "#4b5563", fontWeight: 600, textTransform: "uppercase" }}>Image & Name</td>
               <td style={{ padding: "12px 20px", fontSize: 11, color: "#4b5563", fontWeight: 600, textTransform: "uppercase" }}>Category</td>
-              <td style={{ padding: "12px 20px", fontSize: 11, color: "#4b5563", fontWeight: 600, textTransform: "uppercase" }}>Variants</td>
+              <td style={{ padding: "12px 20px", fontSize: 11, color: "#4b5563", fontWeight: 600, textTransform: "uppercase" }}>Price</td>
+              <td style={{ padding: "12px 20px", fontSize: 11, color: "#4b5563", fontWeight: 600, textTransform: "uppercase" }}>Status</td>
+              <td style={{ padding: "12px 20px", fontSize: 11, color: "#4b5563", fontWeight: 600, textTransform: "uppercase" }}>Stock</td>
+              <td style={{ padding: "12px 20px", fontSize: 11, color: "#4b5563", fontWeight: 600, textTransform: "uppercase" }}>Created Date</td>
               <td style={{ padding: "12px 20px", fontSize: 11, color: "#4b5563", fontWeight: 600, textTransform: "uppercase" }}>Actions</td>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 && (
-              <tr><td colSpan={5} style={{ padding: 24, textAlign: "center", color: "#4b5563", fontSize: 13 }}>No tarif yet</td></tr>
+              <tr><td colSpan={7} style={{ padding: 24, textAlign: "center", color: "#4b5563", fontSize: 13 }}>No products yet</td></tr>
             )}
             {filtered.map(p => {
               const def = p.variants?.find(v => v.isDefault) || p.variants?.[0];
+              const totalStock = p.variants?.reduce((sum, v) => sum + (Number(v.stock) || 0), 0) || 0;
+              const date = new Date(parseInt(p._id.substring(0, 8), 16) * 1000).toLocaleDateString();
+              
               return (
                 <tr key={p._id} className="trow">
                   <td>
@@ -421,29 +414,18 @@ export default function Products() {
                         ? <Image src={def.images[0]} className="img-thumb" alt={p.name} width={40} height={40} style={{ objectFit: "cover" }} />
                         : <div style={{ width: 40, height: 40, borderRadius: 6, background: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>📦</div>
                       }
-                      <div>
-                        <div style={{ fontWeight: 600 }}>{p.name}</div>
-                        {def && <div style={{ fontSize: 11, color: "#4b5563" }}>${Number(def.price).toFixed(2)}</div>}
-                      </div>
+                      <div style={{ fontWeight: 600 }}>{p.name}</div>
                     </div>
                   </td>
-                  <td style={{ color: "#4b5563", fontSize: 12, maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {p.description || "—"}
-                  </td>
-                  <td style={{ color: "#FF8C00", fontSize: 12 }}>{p.category?.name || "—"}</td>
+                  <td style={{ color: "#D32F2F", fontSize: 12 }}>{p.category?.name || "—"}</td>
+                  <td style={{ color: "#4b5563", fontSize: 12 }}>{def ? `$${Number(def.price).toFixed(2)}` : "—"}</td>
                   <td>
-                    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                      {p.variants?.map(v => (
-                        <span key={v._id} title={v.name || (v as any).color} style={{
-                          display: "inline-flex", alignItems: "center", gap: 4,
-                          background: "#f3f4f6", borderRadius: 20, padding: "2px 8px", fontSize: 11, color: "#111827",
-                          border: v.isDefault ? "1px solid #FF8C00" : "1px solid transparent"
-                        }}>
-                          {v.name || (v as any).color}
-                        </span>
-                      ))}
-                    </div>
+                    <span style={{ background: p.isActive !== false ? "#dcfce7" : "#fee2e2", color: p.isActive !== false ? "#166534" : "#991b1b", padding: "2px 8px", borderRadius: 12, fontSize: 11, fontWeight: 600 }}>
+                      {p.isActive !== false ? "Active" : "Draft"}
+                    </span>
                   </td>
+                  <td style={{ color: "#4b5563", fontSize: 12 }}>{totalStock}</td>
+                  <td style={{ color: "#4b5563", fontSize: 12 }}>{date}</td>
                   <td>
                     <div style={{ display: "flex", gap: 8 }}>
                       <button className="btn-ghost" onClick={() => handleEdit(p)}>Edit</button>
@@ -461,58 +443,25 @@ export default function Products() {
       {showModal && (
         <div className="overlay" onClick={() => { setShowModal(false); resetForm(); }}>
           <div className="card modal-card" style={{ width: "clamp(300px, 90vw, 620px)", padding: "clamp(16px, 4vw, 28px)", maxHeight: "90vh", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
-            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, fontWeight: 700, color: "#1B5E20", marginBottom: 20 }}>
-              {editId ? "Edit Tarif" : "New Tarif"}
+            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, fontWeight: 700, color: "#374151", marginBottom: 20 }}>
+              {editId ? "Edit Product" : "New Product"}
             </div>
 
             {error && <div className="err">{error}</div>}
 
             {/* Base fields */}
             <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 24 }}>
-              <Field label="Service Name">
-                <input className="input" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Luxury A/C Room" />
+              <Field label="Product Name">
+                <input className="input" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Custom Mug" />
               </Field>
               <Field label="Description">
-                <textarea className="input" value={description} rows={3} onChange={e => setDescription(e.target.value)} placeholder="Service description" style={{ resize: "vertical" }} />
+                <textarea className="input" value={description} rows={3} onChange={e => setDescription(e.target.value)} placeholder="Product description" style={{ resize: "vertical" }} />
               </Field>
               <Field label="Category">
                 <select className="input" value={categoryId} onChange={e => setCategoryId(e.target.value)}>
                   <option value="">— Select category —</option>
                   {categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
                 </select>
-              </Field>
-              <Field label="Amenities">
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 4 }}>
-                  {AVAILABLE_AMENITIES.map(amenity => {
-                    const isSelected = amenities.includes(amenity);
-                    return (
-                      <button
-                        key={amenity}
-                        type="button"
-                        onClick={() => {
-                          if (isSelected) {
-                            setAmenities(prev => prev.filter(a => a !== amenity));
-                          } else {
-                            setAmenities(prev => [...prev, amenity]);
-                          }
-                        }}
-                        style={{
-                          background: isSelected ? "#1B5E20" : "#f3f4f6",
-                          color: isSelected ? "#fff" : "#4b5563",
-                          border: `1px solid ${isSelected ? "#1B5E20" : "#e2e8f0"}`,
-                          borderRadius: 20,
-                          padding: "6px 14px",
-                          fontSize: 12,
-                          fontWeight: 600,
-                          cursor: "pointer",
-                          transition: "all 0.2s"
-                        }}
-                      >
-                        {amenity}
-                      </button>
-                    );
-                  })}
-                </div>
               </Field>
             </div>
 
@@ -547,7 +496,7 @@ export default function Products() {
             <div style={{ display: "flex", gap: 10, marginTop: 24, justifyContent: "flex-end" }}>
               <button className="btn-ghost" onClick={() => { setShowModal(false); resetForm(); }}>Cancel</button>
               <button className="btn-primary" onClick={saveProduct} disabled={saving}>
-                {saving ? "Saving…" : editId ? "Save Changes" : "Add Tarif"}
+                {saving ? "Saving…" : editId ? "Save Changes" : "Add Product"}
               </button>
             </div>
           </div>
@@ -561,7 +510,7 @@ export default function Products() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <label style={{ fontSize: 12, fontWeight: 600, color: "#FF8C00" }}>{label}</label>
+      <label style={{ fontSize: 12, fontWeight: 600, color: "#D32F2F" }}>{label}</label>
       {children}
     </div>
   );
@@ -596,27 +545,13 @@ function VariantCard({
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
         <Field label="Variant Name">
-          <input className="input" value={variant.color} onChange={e => onUpdate(index, "color", e.target.value)} placeholder="e.g. Deluxe Room" style={{ width: "100%" }} />
+          <input className="input" value={variant.color} onChange={e => onUpdate(index, "color", e.target.value)} placeholder="e.g. Small / Red" style={{ width: "100%" }} />
         </Field>
         <Field label="Price ($)">
           <input className="input" type="number" min="0" value={variant.price} onChange={e => onUpdate(index, "price", e.target.value)} placeholder="0" style={{ width: "100%" }} />
         </Field>
       </div>
 
-      <div style={{ marginBottom: 10 }}>
-        <Field label="Variant Description">
-          <textarea className="input" value={variant.description || ""} onChange={e => onUpdate(index, "description", e.target.value)} placeholder="Variant details..." rows={3} style={{ width: "100%", resize: "vertical" }} />
-        </Field>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
-        <Field label="Duration (Optional)">
-          <input className="input" type="text" value={variant.duration || ""} onChange={e => onUpdate(index, "duration", e.target.value)} placeholder="e.g. 24 Hours" style={{ width: "100%" }} />
-        </Field>
-        <Field label="Capacity (Optional)">
-          <input className="input" type="text" value={variant.capacity || ""} onChange={e => onUpdate(index, "capacity", e.target.value)} placeholder="e.g. 10 People" style={{ width: "100%" }} />
-        </Field>
-      </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
         <Field label="Total Stock">
@@ -625,7 +560,7 @@ function VariantCard({
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-        <label style={{ fontSize: 12, color: "#FF8C00", display: "flex", alignItems: "center", gap: 6, cursor: "pointer" }}>
+        <label style={{ fontSize: 12, color: "#D32F2F", display: "flex", alignItems: "center", gap: 6, cursor: "pointer" }}>
           <input type="checkbox" checked={variant.isDefault} onChange={() => onSetDefault(index)} />
           Default variant
         </label>
@@ -634,10 +569,10 @@ function VariantCard({
       {/* Images - Unlimited */}
       <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 15 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: 12, fontWeight: 600, color: "#FF8C00" }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: "#D32F2F" }}>
             Product Images <span style={{ color: "#555570", fontWeight: 400 }}>({variant.images.length})</span>
           </span>
-          <label style={{ cursor: "pointer", background: "#f3f4f6", borderRadius: 6, padding: "6px 12px", fontSize: 11, color: "#1B5E20", border: "1px solid #e2e8f0" }}>
+          <label style={{ cursor: "pointer", background: "#f3f4f6", borderRadius: 6, padding: "6px 12px", fontSize: 11, color: "#374151", border: "1px solid #e2e8f0" }}>
             + Add Images
             <input 
               type="file" 
@@ -676,7 +611,7 @@ function VariantCard({
                   bottom: 0, 
                   left: 0, 
                   right: 0, 
-                  background: isMain ? "#FF8C00" : "rgba(0,0,0,0.7)", 
+                  background: isMain ? "#D32F2F" : "rgba(0,0,0,0.7)", 
                   color: "#fff", 
                   fontSize: "9px", 
                   textAlign: "center", 

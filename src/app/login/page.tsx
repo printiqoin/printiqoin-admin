@@ -65,7 +65,7 @@ export default function LoginPage() {
     }}>
       {/* HEADER SECTION - Orange & Green */}
       <header style={{
-        background: "linear-gradient(135deg, #FF8C00 0%, #1B5E20 100%)",
+        background: "linear-gradient(135deg, #D32F2F 0%, #374151 100%)",
         padding: "24px 20px",
         boxShadow: "0 2px 8px rgba(255, 140, 0, 0.1)",
         display: "flex",
@@ -73,7 +73,7 @@ export default function LoginPage() {
         justifyContent: "center",
         gap: "12px"
       }}>
-        {/* NADAV N Logo Placeholder */}
+        {/* Printiqo Logo Placeholder */}
         <div style={{
           width: "56px",
           height: "56px",
@@ -84,7 +84,7 @@ export default function LoginPage() {
           justifyContent: "center",
           overflow: "hidden"
         }}>
-          <img src="/images/logo.jpg" alt="Nadav Resorts & Events" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          <img src="/images/logo.png" alt="Printiqo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </div>
         <div>
           <h1 style={{
@@ -94,7 +94,7 @@ export default function LoginPage() {
             fontWeight: 800,
             fontFamily: "'Syne', sans-serif"
           }}>
-            Nadav Resorts & Events
+            Printiqo
           </h1>
           <p style={{
             color: "#ffffff",
@@ -126,7 +126,7 @@ export default function LoginPage() {
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)"
         }}>
           <h2 style={{
-            color: "#1B5E20",
+            color: "#374151",
             marginBottom: "8px",
             fontFamily: "'Syne', sans-serif",
             fontSize: "20px",
@@ -164,7 +164,7 @@ export default function LoginPage() {
             <div>
               <label style={{
                 display: "block",
-                color: "#1B5E20",
+                color: "#374151",
                 fontSize: "12px",
                 marginBottom: "6px",
                 fontWeight: 600,
@@ -191,7 +191,7 @@ export default function LoginPage() {
                   boxSizing: "border-box",
                   transition: "border-color 0.2s"
                 }}
-                onFocus={(e) => e.target.style.borderColor = "#FF8C00"}
+                onFocus={(e) => e.target.style.borderColor = "#D32F2F"}
                 onBlur={(e) => e.target.style.borderColor = "#e0e0e0"}
               />
             </div>
@@ -199,7 +199,7 @@ export default function LoginPage() {
             <div>
               <label style={{
                 display: "block",
-                color: "#1B5E20",
+                color: "#374151",
                 fontSize: "12px",
                 marginBottom: "6px",
                 fontWeight: 600,
@@ -226,7 +226,7 @@ export default function LoginPage() {
                   boxSizing: "border-box",
                   transition: "border-color 0.2s"
                 }}
-                onFocus={(e) => e.target.style.borderColor = "#FF8C00"}
+                onFocus={(e) => e.target.style.borderColor = "#D32F2F"}
                 onBlur={(e) => e.target.style.borderColor = "#e0e0e0"}
               />
             </div>
@@ -236,7 +236,7 @@ export default function LoginPage() {
               disabled={loading}
               style={{
                 padding: "14px",
-                background: loading ? "#FF8C00" : "linear-gradient(135deg, #FF8C00 0%, #E67E00 100%)",
+                background: loading ? "#D32F2F" : "linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%)",
                 color: "#ffffff",
                 border: "none",
                 borderRadius: "8px",
@@ -266,7 +266,7 @@ export default function LoginPage() {
               fontSize: "12px",
               margin: 0
             }}>
-              © 2025 Nadav Resorts & Events
+              © 2025 Printiqo
             </p>
           </div>
         </div>
