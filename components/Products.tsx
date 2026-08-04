@@ -357,10 +357,15 @@ export default function Products() {
           .btn-ghost { padding: 5px 10px; font-size: 11px; }
           .trow td { padding: 10px 12px; font-size: 12px; }
         }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         @media (max-width: 768px) {
-          .trow { display: block; margin-bottom: 16px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; }
-          .trow td { display: block; padding: 8px 0; border: none; margin-bottom: 8px; }
-          .trow td:before { content: attr(data-label); font-weight: 600; color: #D32F2F; display: block; margin-bottom: 4px; }
+          table, thead, tbody, th, td, tr { display: block; }
+          thead tr { position: absolute; top: -9999px; left: -9999px; }
+          table { min-width: 100% !important; }
+          .trow { margin-bottom: 16px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; }
+          .trow td { display: flex; flex-direction: column; align-items: flex-start; padding: 8px 0; border: none; border-bottom: 1px solid #f3f4f6; }
+          .trow td:last-child { border-bottom: none; }
+          .trow td:before { content: attr(data-label); font-weight: 700; color: #4b5563; font-size: 11px; text-transform: uppercase; margin-bottom: 6px; }
           .overlay { padding: 16px; }
           .modal-card { width: calc(100% - 32px) !important; max-height: 90vh !important; }
         }
@@ -368,6 +373,7 @@ export default function Products() {
           .modal-card { width: calc(100% - 24px) !important; padding: 16px !important; }
           .input { font-size: 14px; }
           .btn-primary { padding: 8px 12px; font-size: 12px; width: 100%; }
+          .grid-2 { grid-template-columns: 1fr; }
         }
       `}</style>
 
@@ -408,7 +414,7 @@ export default function Products() {
               
               return (
                 <tr key={p._id} className="trow">
-                  <td>
+                  <td data-label="Image & Name">
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       {def?.images?.[0]
                         ? <Image src={def.images[0]} className="img-thumb" alt={p.name} width={40} height={40} style={{ objectFit: "cover" }} />
@@ -417,16 +423,16 @@ export default function Products() {
                       <div style={{ fontWeight: 600 }}>{p.name}</div>
                     </div>
                   </td>
-                  <td style={{ color: "#D32F2F", fontSize: 12 }}>{p.category?.name || "—"}</td>
-                  <td style={{ color: "#4b5563", fontSize: 12 }}>{def ? `$${Number(def.price).toFixed(2)}` : "—"}</td>
-                  <td>
+                  <td data-label="Category" style={{ color: "#D32F2F", fontSize: 12 }}>{p.category?.name || "—"}</td>
+                  <td data-label="Price" style={{ color: "#4b5563", fontSize: 12 }}>{def ? `$${Number(def.price).toFixed(2)}` : "—"}</td>
+                  <td data-label="Status">
                     <span style={{ background: p.isActive !== false ? "#dcfce7" : "#fee2e2", color: p.isActive !== false ? "#166534" : "#991b1b", padding: "2px 8px", borderRadius: 12, fontSize: 11, fontWeight: 600 }}>
                       {p.isActive !== false ? "Active" : "Draft"}
                     </span>
                   </td>
-                  <td style={{ color: "#4b5563", fontSize: 12 }}>{totalStock}</td>
-                  <td style={{ color: "#4b5563", fontSize: 12 }}>{date}</td>
-                  <td>
+                  <td data-label="Stock" style={{ color: "#4b5563", fontSize: 12 }}>{totalStock}</td>
+                  <td data-label="Created Date" style={{ color: "#4b5563", fontSize: 12 }}>{date}</td>
+                  <td data-label="Actions">
                     <div style={{ display: "flex", gap: 8 }}>
                       <button className="btn-ghost" onClick={() => handleEdit(p)}>Edit</button>
                       <button className="btn-ghost" onClick={() => remove(p._id)}>Delete</button>
@@ -543,7 +549,7 @@ function VariantCard({
         >×</button>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+      <div className="grid-2">
         <Field label="Variant Name">
           <input className="input" value={variant.color} onChange={e => onUpdate(index, "color", e.target.value)} placeholder="e.g. Small / Red" style={{ width: "100%" }} />
         </Field>
@@ -553,7 +559,7 @@ function VariantCard({
       </div>
 
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+      <div className="grid-2">
         <Field label="Total Stock">
           <input className="input" type="number" min="0" value={variant.stock} onChange={e => onUpdate(index, "stock", e.target.value)} placeholder="0" style={{ width: "100%" }} />
         </Field>
