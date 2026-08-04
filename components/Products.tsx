@@ -14,6 +14,8 @@ type Variant = {
   sizes: SizeEntry[];
   images: string[];       // base64 previews / stored URLs
   isDefault: boolean;
+  variantType?: 'model' | 'color' | 'size';
+
   duration?: string;
   capacity?: string;
   maxGuests?: string;
@@ -43,6 +45,7 @@ const BLANK_VARIANT = (): Variant => ({
   sizes: [],
   images: [],
   isDefault: false,
+  variantType: 'color',
   duration: "",
   capacity: "",
   maxGuests: "",
@@ -308,6 +311,7 @@ export default function Products() {
     setVariants(p.variants.map(v => ({
       ...v,
       color: v.color || v.name || "",
+      variantType: v.variantType || 'color',
       price: String(v.price),
       stock: String(v.stock || 0),
       sizes: Array.isArray(v.sizes) ? v.sizes.map(s => ({ ...s, price: String(s.price), stock: String(s.stock) })) : []
@@ -344,6 +348,8 @@ export default function Products() {
         .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:9999;}
         .variant-card{background:#f8f9fa;border:1px solid #e2e8f0;border-radius:10px;padding:16px;position:relative;}
         .variant-card.default{border-color:#D32F2F;}
+        .variant-tab { padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; border: 1px solid transparent; background: transparent; color: #4b5563; }
+        .variant-tab.active { background: #D32F2F; color: #fff; }
         .err{color:#ef4444;font-size:12px;margin-bottom:12px;background:#ef444415;padding:8px 12px;border-radius:6px;}
         .trow td{padding:14px 20px;border-bottom:1px solid #e2e8f0;color:#111827;font-size:13px;}
         .color-dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:6px;border:1px solid #00000030;}
@@ -541,7 +547,7 @@ function VariantCard({
   onApplyPreset: (vi: number, labels: string[]) => void;
 }) {
   return (
-    <div className={`variant-card${variant.isDefault ? " default" : ""}`}>
+    <div className={`variant-card${variant.isDefault ? " default" : ""}`} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {total > 1 && (
         <button
           onClick={() => onRemove(index)}
@@ -549,31 +555,38 @@ function VariantCard({
         >×</button>
       )}
 
-      <div className="grid-2">
-        <Field label="Variant Name">
-          <input className="input" value={variant.color} onChange={e => onUpdate(index, "color", e.target.value)} placeholder="e.g. Small / Red" style={{ width: "100%" }} />
+      <div style={{ display: "flex", gap: 10, borderBottom: "1px solid #e2e8f0", paddingBottom: 12 }}>
+        <button type="button" className={`variant-tab ${variant.variantType === 'model' ? 'active' : ''}`} onClick={() => onUpdate(index, "variantType", "model")}>Model</button>
+        <button type="button" className={`variant-tab ${variant.variantType === 'color' || !variant.variantType ? 'active' : ''}`} onClick={() => onUpdate(index, "variantType", "color")}>Color</button>
+        <button type="button" className={`variant-tab ${variant.variantType === 'size' ? 'active' : ''}`} onClick={() => onUpdate(index, "variantType", "size")}>Size</button>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12 }}>
+        <Field label={variant.variantType === 'model' ? "Model Name" : variant.variantType === 'size' ? "Size" : "Color"}>
+          <div style={{ display: "flex", alignItems: "center", border: "1px solid #e2e8f0", borderRadius: 8, background: "#fff", padding: "0 10px" }}>
+            {(!variant.variantType || variant.variantType === 'color') && (
+              <div style={{ width: 14, height: 14, borderRadius: '50%', background: getValidColor(variant.color), flexShrink: 0, border: '1px solid rgba(0,0,0,0.1)', marginRight: 6 }} />
+            )}
+            <input className="input" style={{ border: 'none', padding: "10px 0", flex: 1 }} value={variant.color} onChange={e => onUpdate(index, "color", e.target.value)} placeholder={variant.variantType === 'model' ? "e.g. Pro Max" : variant.variantType === 'size' ? "e.g. XL" : "e.g. Sage Green"} />
+          </div>
         </Field>
         <Field label="Price ($)">
-          <input className="input" type="number" min="0" value={variant.price} onChange={e => onUpdate(index, "price", e.target.value)} placeholder="0" style={{ width: "100%" }} />
+          <input className="input" type="number" min="0" value={variant.price} onChange={e => onUpdate(index, "price", e.target.value)} placeholder="0" />
         </Field>
-      </div>
-
-
-      <div className="grid-2">
         <Field label="Total Stock">
-          <input className="input" type="number" min="0" value={variant.stock} onChange={e => onUpdate(index, "stock", e.target.value)} placeholder="0" style={{ width: "100%" }} />
+          <input className="input" type="number" min="0" value={variant.stock} onChange={e => onUpdate(index, "stock", e.target.value)} placeholder="0" />
         </Field>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-        <label style={{ fontSize: 12, color: "#D32F2F", display: "flex", alignItems: "center", gap: 6, cursor: "pointer" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <label style={{ fontSize: 12, color: "#D32F2F", display: "flex", alignItems: "center", gap: 6, cursor: "pointer", fontWeight: 600 }}>
           <input type="checkbox" checked={variant.isDefault} onChange={() => onSetDefault(index)} />
           Default variant
         </label>
       </div>
 
       {/* Images - Unlimited */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 15 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span style={{ fontSize: 12, fontWeight: 600, color: "#D32F2F" }}>
             Product Images <span style={{ color: "#555570", fontWeight: 400 }}>({variant.images.length})</span>
@@ -644,13 +657,39 @@ function VariantCard({
               minHeight: "70px"
             }}>
               <div style={{ color: "#9ca3af", fontSize: 11, fontWeight: 600 }}>
-                No images added yet. Click "+ Add Images" to start.
+                No images added.
               </div>
             </div>
           )}
         </div>
       </div>
 
+      {/* Sizes Section - Only shown for Color or Model variants */}
+      {(variant.variantType === 'color' || variant.variantType === 'model' || !variant.variantType) && (
+        <div style={{ marginTop: 10, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, padding: 12 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <span style={{ fontSize: 12, fontWeight: 600, color: "#D32F2F" }}>Sizes <span style={{ color: "#555570", fontWeight: 400 }}>({variant.sizes.length})</span></span>
+            <button className="btn-sm" onClick={() => onAddSize(index)}>+ Add Size</button>
+          </div>
+          
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {variant.sizes.map((sz, si) => (
+              <div key={si} style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: 8, alignItems: "center", background: "#f9fafb", padding: 8, borderRadius: 6, border: "1px solid #f3f4f6" }}>
+                <input className="input" style={{ padding: "8px 10px", fontSize: 12 }} placeholder="Size (e.g. XL)" value={sz.size} onChange={e => onUpdateSize(index, si, 'size', e.target.value)} />
+                <input className="input" style={{ padding: "8px 10px", fontSize: 12 }} type="number" min="0" placeholder="Stock" value={sz.stock} onChange={e => onUpdateSize(index, si, 'stock', e.target.value)} />
+                <button style={{ background: "transparent", color: "#ef4444", border: "none", cursor: "pointer", fontSize: 16, padding: "0 4px" }} onClick={() => onRemoveSize(index, si)}>×</button>
+              </div>
+            ))}
+            {variant.sizes.length === 0 && (
+              <div style={{ color: "#9ca3af", fontSize: 11, fontWeight: 600, textAlign: "center", padding: "10px 0" }}>
+                No sizes added.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
+
