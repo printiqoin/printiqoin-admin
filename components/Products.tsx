@@ -437,7 +437,7 @@ export default function Products() {
                     </div>
                   </td>
                   <td data-label="Category" style={{ color: "#D32F2F", fontSize: 12 }}>{p.category?.name || "—"}</td>
-                  <td data-label="Price" style={{ color: "#4b5563", fontSize: 12 }}>{def ? `$${Number(def.price).toFixed(2)}` : "—"}</td>
+                  <td data-label="Price" style={{ color: "#4b5563", fontSize: 12 }}>{def ? `₹${Number(def.price).toFixed(2)}` : "—"}</td>
                   <td data-label="Status">
                     <span style={{ background: p.isActive !== false ? "#dcfce7" : "#fee2e2", color: p.isActive !== false ? "#166534" : "#991b1b", padding: "2px 8px", borderRadius: 12, fontSize: 11, fontWeight: 600 }}>
                       {p.isActive !== false ? "Active" : "Draft"}
@@ -670,7 +670,7 @@ function VariantCard({
           <input className="input" style={{ padding: "10px", width: "100%", boxSizing: "border-box" }} value={variant.sizeName || ""} onChange={e => onUpdate(index, "sizeName", e.target.value)} placeholder="e.g. XL" />
         </Field>
 
-        <Field label="Price ($)">
+        <Field label="Price (₹)">
           <input className="input" type="number" min="0" value={variant.price} onChange={e => onUpdate(index, "price", e.target.value)} placeholder="0" />
         </Field>
         
