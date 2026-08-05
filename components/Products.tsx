@@ -133,8 +133,11 @@ const getValidColor = (colorName: string): string => {
   if (clean.includes("gold")) return "#ffd700";
   if (clean.includes("silver")) return "#c0c0c0";
   if (clean.includes("beige")) return "#f5f5dc";
+  if (clean.includes("wooden") || clean.includes("wood")) return "#8B5A2B";
   return colorName;
 };
+
+const PREDEFINED_COLORS = ["Black", "White", "Red", "Blue", "Green", "Wooden", "Gold", "Silver"];
 
 /* ─── Main Component ─────────────────────────────────── */
 export default function Products() {
@@ -566,7 +569,43 @@ function VariantCard({
         </Field>
 
         <Field label="Color">
-          <input className="input" style={{ padding: "10px", width: "100%", boxSizing: "border-box" }} value={variant.color || ""} onChange={e => onUpdate(index, "color", e.target.value)} placeholder="e.g. Sage Green" />
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
+            {PREDEFINED_COLORS.map(c => {
+              const hex = getValidColor(c);
+              const isSelected = variant.color?.toLowerCase() === c.toLowerCase();
+              return (
+                <button
+                  key={c}
+                  type="button"
+                  title={c}
+                  onClick={() => onUpdate(index, "color", c)}
+                  style={{
+                    width: 24, height: 24, borderRadius: "50%",
+                    backgroundColor: hex,
+                    border: isSelected ? "2px solid #000" : "1px solid #ccc",
+                    cursor: "pointer",
+                    boxShadow: isSelected ? "0 0 0 2px #fff inset" : "none"
+                  }}
+                />
+              )
+            })}
+          </div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <input 
+              type="color" 
+              style={{ width: 36, height: 36, padding: 0, border: "none", cursor: "pointer", background: "transparent" }}
+              value={getValidColor(variant.color) || "#000000"} 
+              onChange={e => onUpdate(index, "color", e.target.value)} 
+              title="Custom Color"
+            />
+            <input 
+              className="input" 
+              style={{ padding: "10px", width: "100%", boxSizing: "border-box" }} 
+              value={variant.color || ""} 
+              onChange={e => onUpdate(index, "color", e.target.value)} 
+              placeholder="Or type custom color" 
+            />
+          </div>
         </Field>
 
         <Field label="Size">
