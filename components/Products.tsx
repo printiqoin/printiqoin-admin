@@ -9,6 +9,8 @@ type Variant = {
   _id?: string;
   name: string;
   color: string;
+  modelName?: string;
+  sizeName?: string;
   price: string;
   stock: string;
   sizes: SizeEntry[];
@@ -40,6 +42,8 @@ type Category = { _id: string; name: string };
 const BLANK_VARIANT = (): Variant => ({
   name: "",
   color: "",
+  modelName: "",
+  sizeName: "",
   price: "",
   stock: "0",
   sizes: [],
@@ -555,24 +559,24 @@ function VariantCard({
         >×</button>
       )}
 
-      <div style={{ display: "flex", gap: 10, borderBottom: "1px solid #e2e8f0", paddingBottom: 12 }}>
-        <button type="button" className={`variant-tab ${variant.variantType === 'model' ? 'active' : ''}`} onClick={() => onUpdate(index, "variantType", "model")}>Model</button>
-        <button type="button" className={`variant-tab ${variant.variantType === 'color' || !variant.variantType ? 'active' : ''}`} onClick={() => onUpdate(index, "variantType", "color")}>Color</button>
-        <button type="button" className={`variant-tab ${variant.variantType === 'size' ? 'active' : ''}`} onClick={() => onUpdate(index, "variantType", "size")}>Size</button>
-      </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12 }}>
-        <Field label={variant.variantType === 'model' ? "Model Name" : variant.variantType === 'size' ? "Size" : "Color"}>
-          <div style={{ display: "flex", alignItems: "center", border: "1px solid #e2e8f0", borderRadius: 8, background: "#fff", padding: "0 10px" }}>
-            {(!variant.variantType || variant.variantType === 'color') && (
-              <div style={{ width: 14, height: 14, borderRadius: '50%', background: getValidColor(variant.color), flexShrink: 0, border: '1px solid rgba(0,0,0,0.1)', marginRight: 6 }} />
-            )}
-            <input className="input" style={{ border: 'none', padding: "10px 0", flex: 1 }} value={variant.color} onChange={e => onUpdate(index, "color", e.target.value)} placeholder={variant.variantType === 'model' ? "e.g. Pro Max" : variant.variantType === 'size' ? "e.g. XL" : "e.g. Sage Green"} />
-          </div>
+        <Field label="Model Name">
+          <input className="input" style={{ padding: "10px", width: "100%", boxSizing: "border-box" }} value={variant.modelName || ""} onChange={e => onUpdate(index, "modelName", e.target.value)} placeholder="e.g. Pro Max" />
         </Field>
+
+        <Field label="Color">
+          <input className="input" style={{ padding: "10px", width: "100%", boxSizing: "border-box" }} value={variant.color || ""} onChange={e => onUpdate(index, "color", e.target.value)} placeholder="e.g. Sage Green" />
+        </Field>
+
+        <Field label="Size">
+          <input className="input" style={{ padding: "10px", width: "100%", boxSizing: "border-box" }} value={variant.sizeName || ""} onChange={e => onUpdate(index, "sizeName", e.target.value)} placeholder="e.g. XL" />
+        </Field>
+
         <Field label="Price ($)">
           <input className="input" type="number" min="0" value={variant.price} onChange={e => onUpdate(index, "price", e.target.value)} placeholder="0" />
         </Field>
+        
         <Field label="Total Stock">
           <input className="input" type="number" min="0" value={variant.stock} onChange={e => onUpdate(index, "stock", e.target.value)} placeholder="0" />
         </Field>
@@ -664,30 +668,28 @@ function VariantCard({
         </div>
       </div>
 
-      {/* Sizes Section - Only shown for Color or Model variants */}
-      {(variant.variantType === 'color' || variant.variantType === 'model' || !variant.variantType) && (
-        <div style={{ marginTop: 10, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, padding: 12 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <span style={{ fontSize: 12, fontWeight: 600, color: "#D32F2F" }}>Sizes <span style={{ color: "#555570", fontWeight: 400 }}>({variant.sizes.length})</span></span>
-            <button className="btn-sm" onClick={() => onAddSize(index)}>+ Add Size</button>
-          </div>
-          
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {variant.sizes.map((sz, si) => (
-              <div key={si} style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: 8, alignItems: "center", background: "#f9fafb", padding: 8, borderRadius: 6, border: "1px solid #f3f4f6" }}>
-                <input className="input" style={{ padding: "8px 10px", fontSize: 12 }} placeholder="Size (e.g. XL)" value={sz.size} onChange={e => onUpdateSize(index, si, 'size', e.target.value)} />
-                <input className="input" style={{ padding: "8px 10px", fontSize: 12 }} type="number" min="0" placeholder="Stock" value={sz.stock} onChange={e => onUpdateSize(index, si, 'stock', e.target.value)} />
-                <button style={{ background: "transparent", color: "#ef4444", border: "none", cursor: "pointer", fontSize: 16, padding: "0 4px" }} onClick={() => onRemoveSize(index, si)}>×</button>
-              </div>
-            ))}
-            {variant.sizes.length === 0 && (
-              <div style={{ color: "#9ca3af", fontSize: 11, fontWeight: 600, textAlign: "center", padding: "10px 0" }}>
-                No sizes added.
-              </div>
-            )}
-          </div>
+      {/* Sizes Section - Now always shown */}
+      <div style={{ marginTop: 10, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, padding: 12 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: "#D32F2F" }}>Sizes / Options <span style={{ color: "#555570", fontWeight: 400 }}>({variant.sizes.length})</span></span>
+          <button className="btn-sm" onClick={() => onAddSize(index)}>+ Add Value</button>
         </div>
-      )}
+        
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {variant.sizes.map((sz, si) => (
+            <div key={si} style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: 8, alignItems: "center", background: "#f9fafb", padding: 8, borderRadius: 6, border: "1px solid #f3f4f6" }}>
+              <input className="input" style={{ padding: "8px 10px", fontSize: 12 }} placeholder="Value (e.g. XL or 128GB)" value={sz.size} onChange={e => onUpdateSize(index, si, 'size', e.target.value)} />
+              <input className="input" style={{ padding: "8px 10px", fontSize: 12 }} type="number" min="0" placeholder="Stock" value={sz.stock} onChange={e => onUpdateSize(index, si, 'stock', e.target.value)} />
+              <button style={{ background: "transparent", color: "#ef4444", border: "none", cursor: "pointer", fontSize: 16, padding: "0 4px" }} onClick={() => onRemoveSize(index, si)}>×</button>
+            </div>
+          ))}
+          {variant.sizes.length === 0 && (
+            <div style={{ color: "#9ca3af", fontSize: 11, fontWeight: 600, textAlign: "center", padding: "10px 0" }}>
+              No extra sizes added.
+            </div>
+          )}
+        </div>
+      </div>
 
     </div>
   );
