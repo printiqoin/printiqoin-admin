@@ -564,47 +564,105 @@ function VariantCard({
 
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12 }}>
-        <Field label="Model Name">
-          <input className="input" style={{ padding: "10px", width: "100%", boxSizing: "border-box" }} value={variant.modelName || ""} onChange={e => onUpdate(index, "modelName", e.target.value)} placeholder="e.g. Pro Max" />
+        <Field label="Model Name(s) (comma separated)">
+          <input className="input" style={{ padding: "10px", width: "100%", boxSizing: "border-box" }} value={variant.modelName || ""} onChange={e => onUpdate(index, "modelName", e.target.value)} placeholder="e.g. iPhone 13, iPhone 14" />
         </Field>
 
-        <Field label="Color">
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
+        <Field label="Color(s) - Select multiple">
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
             {PREDEFINED_COLORS.map(c => {
               const hex = getValidColor(c);
-              const isSelected = variant.color?.toLowerCase() === c.toLowerCase();
+              const colorStr = `${c}|${hex}`;
+              const selectedColors = (variant.color || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+              // Check if the current color is in the string (either just by name or by Name|Hex format)
+              const isSelected = selectedColors.some(s => s === c.toLowerCase() || s.startsWith(c.toLowerCase() + "|"));
               return (
                 <button
                   key={c}
                   type="button"
-                  title={c}
-                  onClick={() => onUpdate(index, "color", c)}
-                  style={{
-                    width: 24, height: 24, borderRadius: "50%",
-                    backgroundColor: hex,
-                    border: isSelected ? "2px solid #000" : "1px solid #ccc",
-                    cursor: "pointer",
-                    boxShadow: isSelected ? "0 0 0 2px #fff inset" : "none"
+                  onClick={() => {
+                    let current = (variant.color || "").split(",").map(s => s.trim()).filter(Boolean);
+                    if (isSelected) {
+                      current = current.filter(s => !(s.toLowerCase() === c.toLowerCase() || s.toLowerCase().startsWith(c.toLowerCase() + "|")));
+                    } else {
+                      current.push(colorStr);
+                    }
+                    onUpdate(index, "color", current.join(", "));
                   }}
-                />
+                  style={{
+                    display: "flex", alignItems: "center", gap: 6,
+                    padding: "4px 10px 4px 4px", borderRadius: 20,
+                    border: isSelected ? "1px solid #000" : "1px solid #e2e8f0",
+                    background: isSelected ? "#f3f4f6" : "#fff",
+                    cursor: "pointer", fontSize: 12, fontWeight: 500
+                  }}
+                >
+                  <div style={{
+                    width: 16, height: 16, borderRadius: "50%",
+                    backgroundColor: hex,
+                    border: "1px solid rgba(0,0,0,0.1)"
+                  }} />
+                  {c}
+                </button>
               )
             })}
           </div>
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <input 
-              type="color" 
-              style={{ width: 36, height: 36, padding: 0, border: "none", cursor: "pointer", background: "transparent" }}
-              value={getValidColor(variant.color) || "#000000"} 
-              onChange={e => onUpdate(index, "color", e.target.value)} 
-              title="Custom Color"
-            />
-            <input 
-              className="input" 
-              style={{ padding: "10px", width: "100%", boxSizing: "border-box" }} 
-              value={variant.color || ""} 
-              onChange={e => onUpdate(index, "color", e.target.value)} 
-              placeholder="Or type custom color" 
-            />
+          
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, background: "#f9fafb", padding: 10, borderRadius: 8, border: "1px solid #e2e8f0" }}>
+            <span style={{ fontSize: 11, fontWeight: 600, color: "#6b7280" }}>ADD CUSTOM COLOR</span>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <input 
+                id={`custom-hex-${index}`}
+                type="color" 
+                style={{ width: 36, height: 36, padding: 0, border: "none", cursor: "pointer", background: "transparent" }}
+                defaultValue="#000000"
+                title="Pick Custom Hex"
+              />
+              <input 
+                id={`custom-name-${index}`}
+                className="input" 
+                style={{ padding: "8px 10px", width: "100%", boxSizing: "border-box", fontSize: 13 }} 
+                placeholder="Color Name (e.g. Sky Blue)" 
+              />
+              <button 
+                type="button"
+                className="btn-sm"
+                onClick={() => {
+                  const hexInput = document.getElementById(`custom-hex-${index}`) as HTMLInputElement;
+                  const nameInput = document.getElementById(`custom-name-${index}`) as HTMLInputElement;
+                  if (hexInput && nameInput && nameInput.value.trim()) {
+                    const newColor = `${nameInput.value.trim()}|${hexInput.value}`;
+                    const current = (variant.color || "").split(",").map(s => s.trim()).filter(Boolean);
+                    onUpdate(index, "color", [...current, newColor].join(", "));
+                    nameInput.value = ""; // reset
+                  }
+                }}
+              >
+                Add
+              </button>
+            </div>
+            
+            {(variant.color || "").split(",").filter(Boolean).length > 0 && (
+              <div style={{ marginTop: 8 }}>
+                <span style={{ fontSize: 11, fontWeight: 600, color: "#6b7280", display: "block", marginBottom: 6 }}>SELECTED COLORS:</span>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {(variant.color || "").split(",").map(s => s.trim()).filter(Boolean).map((colorStr, i) => {
+                    const [cName, cHex] = colorStr.includes("|") ? colorStr.split("|") : [colorStr, getValidColor(colorStr)];
+                    return (
+                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, background: "#e5e7eb", padding: "2px 6px 2px 2px", borderRadius: 12, fontSize: 11 }}>
+                        <div style={{ width: 14, height: 14, borderRadius: "50%", background: cHex || "#000" }} />
+                        {cName}
+                        <button type="button" style={{ border: "none", background: "transparent", cursor: "pointer", padding: "0 2px", color: "#6b7280" }} onClick={() => {
+                          const current = (variant.color || "").split(",").map(s => s.trim()).filter(Boolean);
+                          current.splice(i, 1);
+                          onUpdate(index, "color", current.join(", "));
+                        }}>×</button>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </Field>
 
