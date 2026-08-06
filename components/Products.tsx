@@ -666,10 +666,6 @@ function VariantCard({
           </div>
         </Field>
 
-        <Field label="Size">
-          <input className="input" style={{ padding: "10px", width: "100%", boxSizing: "border-box" }} value={variant.sizeName || ""} onChange={e => onUpdate(index, "sizeName", e.target.value)} placeholder="e.g. XL" />
-        </Field>
-
         <Field label="Price (₹)">
           <input className="input" type="number" min="0" value={variant.price} onChange={e => onUpdate(index, "price", e.target.value)} placeholder="0" />
         </Field>
