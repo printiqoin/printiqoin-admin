@@ -159,7 +159,7 @@ export default function Products() {
 
   const fetchProducts = useCallback(async () => {
     try {
-      const res = await fetch(`${api}/product`, { headers: { Authorization: token() } });
+      const res = await fetch(`${api}/product?limit=1000`, { headers: { Authorization: token() } });
       const data = await res.json();
       if (data.products) setProducts(data.products);
     } catch (e) { console.error(e); }
