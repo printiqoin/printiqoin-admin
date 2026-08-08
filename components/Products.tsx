@@ -242,12 +242,6 @@ export default function Products() {
   const validate = (): string | null => {
     if (!name.trim()) return "Product name is required.";
     if (variants.length === 0) return "At least one variant is required.";
-    const colors = variants.map(v => v.color.trim().toLowerCase()).filter(Boolean);
-    if (new Set(colors).size !== colors.length) return "Each variant name must be unique.";
-    for (const v of variants) {
-      const vPrice = Number(v.price) || (v.sizes.length > 0 ? Number(v.sizes[0].price) : 0);
-      if (vPrice <= 0) return "Every variant must have a valid price (check your quantities).";
-    }
     return null;
   };
 
